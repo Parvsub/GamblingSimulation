@@ -2,63 +2,102 @@ package com.gamblersimulation;
 
 import java.util.*;
 public class GamblingSimulator {
-    static int AmountOfStake=100;
     static int TotalAmountDifferenceInMonth=0;
-    static int BetAmount=1;
     static int Won=1;
     static int Lost=0;
-    static int TotalAmount=0;
+
     public static void main(String[] args) {
+        int maximumWon[]= new int[100];
+        int maximumLost[]= new int[100];
+        int month =1;
         Scanner sc = new Scanner(System.in);
-        System.out.println("Starting amount of stake is "+AmountOfStake);
-        System.out.println("Amount to bet after every play "+BetAmount);
-        for (int i = 1; i <= 20; i++) {
-            int cashInHand = AmountOfStake;
-            while(cashInHand > 50 && cashInHand < 150) {
-                int play = (int) Math.floor(Math.random() * 10) % 2;
-                System.out.println("Gamblers play:"+play);
-
-                switch(play) {
-                    case 1:
-                        cashInHand = cashInHand + BetAmount;
-                        System.out.println("Total current cash gambler has "+cashInHand);
-                        break;
-                    case 0:
-                        cashInHand = cashInHand - BetAmount;
-                        System.out.println("Total current cash gambler has "+cashInHand);
-                        break;
-                    default:
-                        System.out.println("default");
+        boolean label = true;
+        while(label) {
+            System.out.println(" Month"+month+" gambling starts");
+            System.out.println("Enter starting amount of stake ");
+            int amountOfStake = sc.nextInt();
+            System.out.println("Enter amount to bet ");
+            int betAmount = sc.nextInt();
+            int totalAmount = 0;
+            for (int i = 1; i <= 20; i++) {
+                int cashInHand = amountOfStake;
+                while(cashInHand > amountOfStake /2 && cashInHand < amountOfStake * 1.5) {
+                    int play = (int) Math.floor(Math.random() * 10) % 2;
+                    System.out.println("Gamblers play:"+play);
+                    switch(play) {
+                        case 1:
+                            cashInHand = cashInHand + betAmount;
+                            System.out.println("Total current cash gambler has "+cashInHand);
+                            break;
+                        case 0:
+                            cashInHand = cashInHand - betAmount;
+                            System.out.println("Total current cash gambler has "+cashInHand);
+                            break;
+                        default:
+                            System.out.println("default");
+                    }
                 }
-
+                if(cashInHand==(amountOfStake / 2) || cashInHand==(amountOfStake * 1.5)) {
+                    System.out.println("Player would like to resign for current day"+i);
+                }
+                if(cashInHand > amountOfStake) {
+                    int amountWonPerDay = cashInHand - amountOfStake;
+                    System.out.println("Player won day"+i+" RS "+amountWonPerDay);
+                }
+                else if(cashInHand < amountOfStake){
+                    int amountLostPerDay = amountOfStake - cashInHand;
+                    System.out.println("Player lost day"+i+" RS "+amountLostPerDay);
+                }
+                if(cashInHand == (amountOfStake * 1.5)) {
+                    maximumWon[i] = cashInHand;
+                }
+                else if (cashInHand == 50) {
+                    maximumLost[i] = cashInHand;
+                }
+                totalAmount = totalAmount + cashInHand;
             }
-            if(cashInHand==150 || cashInHand==50) {
-                System.out.println("Player would like to resign for current day"+i);
+            System.out.println("Luckiest days as following as gambler WON maximum amount");
+            for(int i = 1; i <= 20; i++) {
+                if(maximumWon[i] == (amountOfStake * 1.5))
+                    System.out.println("Day"+i+" won "+maximumWon[i]+" $");
             }
-            if(cashInHand > 100) {
-                int amountWonPerDay = cashInHand - AmountOfStake;
-                System.out.println("Player won day"+i+" RS "+amountWonPerDay);
+            System.out.println("Unluckiest days as following as gambler LOST maximum amount");
+            for(int i = 1; i <= 20; i++) {
+                if(maximumLost[i]== (amountOfStake / 2))
+                    System.out.println("Day"+i+" lost "+maximumLost[i]+" $");
             }
-            else if(cashInHand < 100){
-                int amountLostPerDay = AmountOfStake - cashInHand;
-                System.out.println("Player lost day"+i+" RS "+amountLostPerDay);
-
+            System.out.println("Total amount player has after 20 days as per day included = "+totalAmount+" $");
+            TotalAmountDifferenceInMonth = totalAmount - amountOfStake * 20;
+            if(TotalAmountDifferenceInMonth > 0) {
+                System.out.println("Total cash gambler won in month"+month+"= "+TotalAmountDifferenceInMonth+" $");
             }
-            if(cashInHand == 150) {
-                System.out.println("Day"+i+" is gamblers Luckiest day as he won maximum amount "+cashInHand+" RS");
+            else if(TotalAmountDifferenceInMonth < 0) {
+                System.out.println("Total cash gambler lost in month"+month+"= "+TotalAmountDifferenceInMonth+" $");
             }
-            else if (cashInHand == 50) {
-                System.out.println("Day"+i+" is gamblers Unluckiest day as he lost maximum amount "+cashInHand+" RS");
+            else {
+                System.out.println("Total cash gambler neither lost or won in month"+month+"= "+
+                        TotalAmountDifferenceInMonth +" $");
             }
-            TotalAmount = TotalAmount + cashInHand;
-        }
-        System.out.println("Total amount player has after 20 days as per day included = "+TotalAmount+" $");
-        TotalAmountDifferenceInMonth = TotalAmount - AmountOfStake * 20;
-        if(TotalAmountDifferenceInMonth > 0) {
-            System.out.println("Total cash gambler won "+TotalAmountDifferenceInMonth+" $");
-        }
-        else {
-            System.out.println("Total cash gambler lost in that month "+TotalAmountDifferenceInMonth+" $");
+            System.out.println();
+            if(TotalAmountDifferenceInMonth > 0) {
+                System.out.println("Do you want to continue playing for next month");
+                System.out.println("If you want to continue playing type '1'");
+                System.out.println("if you want stop gambling type '2'");
+                int responseToPlay = sc.nextInt();
+                if(responseToPlay == 1) {
+                    label = true;
+                    month++;
+                }
+                else {
+                    label = false;
+                    System.out.println("Thanks for Playing");
+                }
+            }
+            else {
+                System.out.println("You are in loss");
+                System.out.println("Thanks for Playing");
+                break;
+            }
         }
     }
 }
